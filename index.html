@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Organizador de URLs do YouTube</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <style>
+        body {
+            background-image: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"%3E%3Cg fill-rule="evenodd"%3E%3Cg fill="%239C92AC" fill-opacity="0.4"%3E%3Cpath opacity=".5" d="M96 95h4v1h-4v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9zm-1 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9z"/%3E%3Cpath d="M6 5V0H5v5H0v1h5v94h1V6h94V5H6z"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E');
+        }
+        select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%234B5563'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0.5rem center;
+            background-size: 1.5em 1.5em;
+            padding-right: 2.5rem;
+        }
+        #fullscreenVideo {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 9999;
+            display: none;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <div class="container mx-auto p-4">
+        <h1 class="text-3xl font-bold mb-4 text-center text-indigo-700">Organizador de URLs do YouTube</h1>
+        
+        <div class="mb-4 flex flex-col sm:flex-row">
+            <input type="text" id="categoryInput" placeholder="Nome da categoria" class="p-2 border rounded mb-2 sm:mb-0 sm:mr-2 flex-grow">
+            <button onclick="addCategory()" class="bg-indigo-500 text-white p-2 rounded hover:bg-indigo-600 transition">Adicionar Categoria</button>
+        </div>
+        
+        <div class="mb-4 flex flex-col sm:flex-row">
+            <input type="text" id="urlInput" placeholder="URL do YouTube" class="p-2 border rounded mb-2 sm:mb-0 sm:mr-2 flex-grow">
+            <select id="categorySelect" class="p-2 border rounded mb-2 sm:mb-0 sm:mr-2 pr-8 bg-white flex-grow"></select>
+            <button onclick="addUrl()" class="bg-green-500 text-white p-2 rounded hover:bg-green-600 transition">Adicionar URL</button>
+        </div>
+        
+        <div id="categories" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+        
+        <div id="tutorial" class="mt-8 bg-white p-6 rounded-lg shadow-md">
+            <h2 class="text-2xl font-bold mb-4 text-indigo-700">Como usar o Organizador de URLs do YouTube</h2>
+            
+            <div class="tutorial-step">
+                <h3 class="font-bold mb-2">1. Criar uma categoria</h3>
+                <p>Digite o nome da categoria no campo "Nome da categoria" e clique em "Adicionar Categoria".</p>
+            </div>
+
+            <div class="tutorial-step">
+                <h3 class="font-bold mb-2">2. Adicionar uma URL</h3>
+                <p>Cole a URL do YouTube no campo "URL do YouTube", selecione a categoria desejada no menu suspenso e clique em "Adicionar URL".</p>
+            </div>
+
+            <div class="tutorial-step">
+                <h3 class="font-bold mb-2">3. Visualizar URLs em uma categoria</h3>
+                <p>Clique em uma categoria para ver todas as URLs salvas nela.</p>
+            </div>
+
+            <div class="tutorial-step">
+                <h3 class="font-bold mb-2">4. Assistir a um vídeo</h3>
+                <p>Clique na thumbnail de um vídeo para assisti-lo em tela cheia.</p>
+            </div>
+
+            <div class="tutorial-step">
+                <h3 class="font-bold mb-2">5. Sair do modo tela cheia</h3>
+                <p>Pressione a tecla "ESC" no seu teclado para sair do modo de tela cheia.</p>
+            </div>
+
+            <div class="tutorial-step">
+                <h3 class="font-bold mb-2">6. Apagar uma URL</h3>
+                <p>Dentro de uma categoria, clique no ícone "X" no canto superior direito de uma URL para removê-la.</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="urlList" class="fixed top-0 left-0 w-full h-full bg-white p-4 overflow-auto hidden">
+        <h2 id="urlListTitle" class="text-2xl font-bold mb-4"></h2>
+        <div id="urlListContent" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+        <button onclick="closeUrlList()" class="mt-4 bg-red-500 text-white p-2 rounded hover:bg-red-600 transition">Fechar</button>
+    </div>
+
+    <div id="fullscreenVideo"></div>
+
+    <script>
+        let categories = JSON.parse(localStorage.getItem('categories')) || {};
+
+        function saveCategories() {
+            localStorage.setItem('categories', JSON.stringify(categories));
+        }
+
+        function addCategory() {
+            const categoryName = document.getElementById('categoryInput').value.trim();
+            if (categoryName && !(categoryName in categories)) {
+                categories[categoryName] = [];
+                saveCategories();
+                updateCategorySelect();
+                renderCategories();
+                document.getElementById('categoryInput').value = '';
+            }
+        }
+
+        function addUrl() {
+            const url = document.getElementById('urlInput').value.trim();
+            const category = document.getElementById('categorySelect').value;
+            if (url && category) {
+                const videoId = getYouTubeVideoId(url);
+                if (videoId) {
+                    fetch(`https://noembed.com/embed?url=${url}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            categories[category].push({
+                                url: url,
+                                thumbnail: `https://img.youtube.com/vi/${videoId}/0.jpg`,
+                                title: data.title
+                            });
+                            saveCategories();
+                            renderCategories();
+                            document.getElementById('urlInput').value = '';
+                        });
+                }
+            }
+        }
+
+        function getYouTubeVideoId(url) {
+            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+            const match = url.match(regExp);
+            return (match && match[2].length === 11) ? match[2] : null;
+        }
+
+        function updateCategorySelect() {
+            const select = document.getElementById('categorySelect');
+            select.innerHTML = '';
+            for (const category in categories) {
+                const option = document.createElement('option');
+                option.value = category;
+                option.textContent = category;
+                select.appendChild(option);
+            }
+        }
+
+        function renderCategories() {
+            const categoriesDiv = document.getElementById('categories');
+            categoriesDiv.innerHTML = '';
+            for (const category in categories) {
+                const categoryDiv = document.createElement('div');
+                categoryDiv.className = 'bg-white p-4 rounded shadow cursor-pointer transform hover:scale-105 transition';
+                categoryDiv.innerHTML = `
+                    <h2 class="text-xl font-bold mb-2">${category}</h2>
+                    <p>${categories[category].length} URLs</p>
+                `;
+                categoryDiv.onclick = () => showUrlList(category);
+                categoriesDiv.appendChild(categoryDiv);
+            }
+            animateCategories();
+        }
+
+        function showUrlList(category) {
+            const urlListDiv = document.getElementById('urlList');
+            const urlListTitleDiv = document.getElementById('urlListTitle');
+            const urlListContentDiv = document.getElementById('urlListContent');
+            
+            urlListTitleDiv.textContent = `URLs em ${category}`;
+            urlListContentDiv.innerHTML = '';
+            
+            categories[category].forEach((item, index) => {
+                const urlDiv = document.createElement('div');
+                urlDiv.className = 'bg-white p-4 rounded shadow relative';
+                urlDiv.innerHTML = `
+                    <img src="${item.thumbnail}" alt="Thumbnail" class="w-full h-32 object-cover mb-2 cursor-pointer" onclick="playVideo('${item.url}')">
+                    <h3 class="font-bold mb-1">${item.title}</h3>
+                    <a href="${item.url}" target="_blank" class="text-blue-500 hover:underline break-all text-sm">${item.url}</a>
+                    <button onclick="deleteUrl('${category}', ${index})" class="absolute top-2 right-2 bg-red-500 text-white p-1 rounded hover:bg-red-600 transition">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                `;
+                urlListContentDiv.appendChild(urlDiv);
+            });
+            
+            urlListDiv.classList.remove('hidden');
+        }
+
+        function closeUrlList() {
+            document.getElementById('urlList').classList.add('hidden');
+        }
+
+        function deleteUrl(category, index) {
+            categories[category].splice(index, 1);
+            saveCategories();
+            showUrlList(category);
+            renderCategories();
+        }
+
+        function animateCategories() {
+            anime({
+                targets: '#categories > div',
+                scale: [0.9, 1],
+                opacity: [0, 1],
+                delay: anime.stagger(100),
+                easing: 'easeOutElastic(1, .5)'
+            });
+        }
+
+        function playVideo(url) {
+            const videoId = getYouTubeVideoId(url);
+            const fullscreenVideo = document.getElementById('fullscreenVideo');
+            fullscreenVideo.innerHTML = `
+                <iframe width="100%" height="100%" src="https://www.youtube.com/embed/${videoId}?autoplay=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+            `;
+            fullscreenVideo.style.display = 'block';
+        }
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                const fullscreenVideo = document.getElementById('fullscreenVideo');
+                fullscreenVideo.style.display = 'none';
+                fullscreenVideo.innerHTML = '';
+            }
+        });
+
+        updateCategorySelect();
+        renderCategories();
+    </script>
+</body>
+</html>
